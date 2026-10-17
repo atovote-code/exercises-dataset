@@ -1877,7 +1877,7 @@
   }
 
   // Wire DB Setup events
-  dbOpenBtn.addEventListener('click', openDbSetup);
+  if (dbOpenBtn) dbOpenBtn.addEventListener('click', openDbSetup);
   dbCloseBtn.addEventListener('click', closeDbSetup);
   dbOverlay.addEventListener('click', e => { if (e.target === dbOverlay) closeDbSetup(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && dbOverlay.classList.contains('open')) closeDbSetup(); });
