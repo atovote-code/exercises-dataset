@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Katana Videoideen</title>
+<style>
+  :root {
+    --bg: #f6f4f1;
+    --card: #ffffff;
+    --text: #1f1d1a;
+    --muted: #6b665f;
+    --line: #e4dfd8;
+    --accent: #c2410c;
+    --accent-text: #ffffff;
+    --s-idee: #6b7280;
+    --s-gedreht: #2563eb;
+    --s-geschnitten: #9333ea;
+    --s-gepostet: #16a34a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161513;
+      --card: #211f1c;
+      --text: #f2efea;
+      --muted: #a39d94;
+      --line: #35312c;
+      --accent: #f97316;
+      --accent-text: #1a1007;
+      --s-idee: #9ca3af;
+      --s-gedreht: #60a5fa;
+      --s-geschnitten: #c084fc;
+      --s-gepostet: #4ade80;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 640px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+  }
+  label { display: block; font-size: .9rem; font-weight: 600; margin: 0 0 6px; }
+  input, textarea, select, button { font: inherit; color: inherit; }
+  input, textarea, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--bg);
+    min-height: 46px;
+  }
+  textarea { resize: vertical; min-height: 90px; }
+  input:focus, textarea:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .field { margin-bottom: 14px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .btn {
+    width: 100%;
+    min-height: 48px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--accent);
+    color: var(--accent-text);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .list-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin: 32px 0 12px; flex-wrap: wrap;
+  }
+  .list-head h2 { font-size: 1.2rem; margin: 0; }
+  .list-head select { width: auto; min-height: 40px; padding: 8px 10px; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .idea h3 { margin: 0 0 4px; font-size: 1.05rem; overflow-wrap: anywhere; }
+  .idea p { margin: 0 0 12px; color: var(--muted); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .tag {
+    font-size: .8rem; padding: 3px 10px; border-radius: 999px;
+    border: 1px solid var(--line); color: var(--muted);
+  }
+  .meta select {
+    width: auto; min-height: 38px; padding: 6px 10px; font-weight: 600;
+    border-color: currentColor;
+  }
+  .st-idee { color: var(--s-idee); }
+  .st-gedreht { color: var(--s-gedreht); }
+  .st-geschnitten { color: var(--s-geschnitten); }
+  .st-gepostet { color: var(--s-gepostet); }
+  .del {
+    margin-left: auto; background: none; border: 1px solid var(--line);
+    border-radius: 10px; min-height: 38px; padding: 6px 12px;
+    color: var(--muted); cursor: pointer;
+  }
+  .empty { color: var(--muted); text-align: center; padding: 24px 0; }
+  .warn { color: var(--accent); font-size: .9rem; margin-top: 8px; display: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>🐾 Katana Videoideen</h1>
+  <p class="sub">Ideen sammeln, planen und den Fortschritt im Blick behalten.</p>
+
+  <form id="form" class="card" autocomplete="off">
+    <div class="field">
+      <label for="title">Neue Idee</label>
+      <input id="title" required maxlength="120" placeholder="z. B. Katana lernt einen neuen Trick">
+    </div>
+    <div class="field">
+      <label for="desc">Was passiert im Video</label>
+      <textarea id="desc" placeholder="Kurz beschreiben, was zu sehen ist …"></textarea>
+    </div>
+    <div class="row field">
+      <div>
+        <label for="platform">Plattform</label>
+        <select id="platform">
+          <option>Alle</option>
+          <option>TikTok</option>
+          <option>Instagram</option>
+          <option>YouTube</option>
+        </select>
+      </div>
+      <div>
+        <label for="status">Status</label>
+        <select id="status"></select>
+      </div>
+    </div>
+    <button class="btn" type="submit">Idee speichern</button>
+    <p class="warn" id="warn">Hinweis: Dein Browser erlaubt gerade kein Speichern. Ideen gehen beim Neuladen verloren.</p>
+  </form>
+
+  <div class="list-head">
+    <h2>Alle Ideen (<span id="count">0</span>)</h2>
+    <select id="sort" aria-label="Sortieren">
+      <option value="status">Nach Status sortieren</option>
+      <option value="status-desc">Status rückwärts</option>
+      <option value="new">Neueste zuerst</option>
+    </select>
+  </div>
+  <ul id="list"></ul>
+</main>
+
+<script>
+  const STATUS = ["Idee", "gedreht", "geschnitten", "gepostet"];
+  const KEY = "katana-ideen";
+  let ideas = [];
+  let canSave = true;
+
+  const $ = id => document.getElementById(id);
+  const cls = s => "st-" + s.toLowerCase();
+
+  function load() {
+    try { ideas = JSON.parse(localStorage.getItem(KEY)) || []; }
+    catch { ideas = []; canSave = false; }
+    try { $("sort").value = localStorage.getItem(KEY + "-sort") || "status"; } catch {}
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(ideas)); }
+    catch { canSave = false; }
+    $("warn").style.display = canSave ? "none" : "block";
+  }
+
+  $("status").innerHTML = STATUS.map(s => `<option>${s}</option>`).join("");
+
+  function render() {
+    const mode = $("sort").value;
+    const sorted = [...ideas].sort((a, b) => {
+      if (mode === "new") return b.created - a.created;
+      const d = STATUS.indexOf(a.status) - STATUS.indexOf(b.status);
+      return (mode === "status-desc" ? -d : d) || b.created - a.created;
+    });
+    $("count").textContent = ideas.length;
+    const list = $("list");
+    list.innerHTML = "";
+    if (!sorted.length) {
+      list.innerHTML = '<li class="empty">Noch keine Ideen – leg oben los!</li>';
+      return;
+    }
+    for (const idea of sorted) {
+      const li = document.createElement("li");
+      li.className = "card idea";
+      const h3 = document.createElement("h3");
+      h3.textContent = idea.title;
+      li.append(h3);
+      if (idea.desc) {
+        const p = document.createElement("p");
+        p.textContent = idea.desc;
+        li.append(p);
+      }
+      const meta = document.createElement("div");
+      meta.className = "meta";
+
+      const sel = document.createElement("select");
+      sel.setAttribute("aria-label", "Status ändern");
+      sel.className = cls(idea.status);
+      sel.innerHTML = STATUS.map(s => `<option${s === idea.status ? " selected" : ""}>${s}</option>`).join("");
+      sel.onchange = () => { idea.status = sel.value; save(); render(); };
+
+      const tag = document.createElement("span");
+      tag.className = "tag";
+      tag.textContent = idea.platform === "Alle" ? "Alle Plattformen" : idea.platform;
+
+      const del = document.createElement("button");
+      del.className = "del";
+      del.type = "button";
+      del.textContent = "Löschen";
+      del.onclick = () => {
+        if (confirm(`„${idea.title}“ wirklich löschen?`)) {
+          ideas = ideas.filter(i => i.id !== idea.id);
+          save(); render();
+        }
+      };
+
+      meta.append(sel, tag, del);
+      li.append(meta);
+      list.append(li);
+    }
+  }
+
+  $("form").addEventListener("submit", e => {
+    e.preventDefault();
+    const title = $("title").value.trim();
+    if (!title) return;
+    ideas.push({
+      id: Date.now() + Math.random(),
+      title,
+      desc: $("desc").value.trim(),
+      platform: $("platform").value,
+      status: $("status").value,
+      created: Date.now()
+    });
+    save(); render();
+    $("form").reset();
+    $("title").focus();
+  });
+
+  $("sort").addEventListener("change", () => {
+    try { localStorage.setItem(KEY + "-sort", $("sort").value); } catch {}
+    render();
+  });
+
+  load();
+  render();
+</script>
+</body>
+</html>
